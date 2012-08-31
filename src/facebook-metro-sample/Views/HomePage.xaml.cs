@@ -39,5 +39,15 @@ namespace facebook_metro_sample.Views
         {
             Frame.Navigate(typeof(FacebookLoginPage));
         }
+
+        private void btnFuntownLogin_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(FuntownLoginPage));
+        }
+
+        private void btnMsnLogin_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(MsnLoginPage));
+        }
     }
 }

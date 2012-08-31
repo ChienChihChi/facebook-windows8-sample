@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
-using Facebook;
+using Funtown;
+using funtown_metro_sample.Views;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -12,7 +13,7 @@ namespace facebook_metro_sample.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class FacebookLoginPage : Page
+    public sealed partial class FuntownLoginPage : Page
     {
         private const string AppId = ""
 
@@ -25,9 +26,9 @@ namespace facebook_metro_sample.Views
         /// </remarks>
         private const string ExtendedPermissions = ""
 
-        private readonly FacebookClient _fb = new FacebookClient();
+        private readonly FuntownClient _ft = new FuntownClient();
 
-        public FacebookLoginPage()
+        public FuntownLoginPage()
         {
             this.InitializeComponent();
         }
@@ -44,7 +45,7 @@ namespace facebook_metro_sample.Views
         private void WebView1_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             WebView1.LoadCompleted += WebView1_LoadCompleted;
-
+            
             var loginUrl = GetFacebookLoginUrl(AppId, ExtendedPermissions);
             WebView1.Navigate(loginUrl);
         }
@@ -53,9 +54,9 @@ namespace facebook_metro_sample.Views
         {
             dynamic parameters = new ExpandoObject();
             parameters.client_id = appId;
-            parameters.redirect_uri = "https://www.facebook.com/connect/login_success.html";
-            parameters.response_type = "token";
-            parameters.display = "popup";
+            parameters.redirect_uri = "https://weblogin.funtown.com.tw/oauth/login_success.html";
+            parameters.response_type = "code";
+            parameters.mobile = true;
 
             // add the 'scope' parameter only if we have extendedPermissions.
             if (!string.IsNullOrWhiteSpace(extendedPermissions))
@@ -64,32 +65,34 @@ namespace facebook_metro_sample.Views
                 parameters.scope = extendedPermissions;
             }
 
-            return _fb.GetLoginUrl(parameters);
+            return _ft.GetLoginUrl(parameters);
         }
 
         private void WebView1_LoadCompleted(object sender, Windows.UI.Xaml.Navigation.NavigationEventArgs e)
         {
-            FacebookOAuthResult oauthResult;
-            if (!_fb.TryParseOAuthCallbackUrl(e.Uri, out oauthResult))
+            FuntownOAuthResult oauthResult;
+            if (!_ft.TryParseOAuthCallbackUrl(e.Uri, out oauthResult))
             {
                 return;
             }
 
             if (oauthResult.IsSuccess)
             {
+                var error_code = oauthResult.ErrorCode;
+                var code = oauthResult.Code;
                 var accessToken = oauthResult.AccessToken;
-                if (!string.IsNullOrEmpty(accessToken))
+                
+                if (error_code == 100 && !string.IsNullOrEmpty(code))
+                {
+                    RequestToken(code);
+                    return;
+                }
+
+                if (error_code == 100 && !string.IsNullOrEmpty(accessToken))
                 {
                     LoginSucceded(accessToken);
                     return;
                 }
-
-                var code = oauthResult.Code;
-                if (string.IsNullOrEmpty(code))
-                {
-                    return;
-                }
-
             }
             else
             {
@@ -97,18 +100,31 @@ namespace facebook_metro_sample.Views
             }
         }
 
-        private async void LoginSucceded(string accessToken)
+        private void LoginSucceded(string accessToken)
         {
             dynamic parameters = new ExpandoObject();
             parameters.access_token = accessToken;
-            parameters.fields = "id";
 
-            dynamic result = await _fb.GetTaskAsync("me", parameters);
-            parameters = new ExpandoObject();
-            parameters.id = result.id;
-            parameters.access_token = accessToken;
+            Frame.Navigate(typeof(FuntownInfoPage), (object)parameters);
+        }
 
-            Frame.Navigate(typeof(FacebookInfoPage), (object)parameters);
+        private async void RequestToken(string code)
+        {
+            dynamic parameters = new ExpandoObject();
+            parameters.client_id = AppId;
+            parameters.client_secret = ""
+            parameters.redirect_uri = "https://weblogin.funtown.com.tw/oauth/login_success.html";
+            parameters.grant_type = "authorization_code";
+            parameters.code = code;
+
+            dynamic result = await _ft.GetTaskAsync("oauth/token.php", parameters);
+            string accessToken = result.access_token;
+            var errorCode = result.error_code;
+
+            if (errorCode == 100 && !string.IsNullOrEmpty(accessToken))
+            {
+                LoginSucceded(accessToken);
+            }
         }
     }
 }

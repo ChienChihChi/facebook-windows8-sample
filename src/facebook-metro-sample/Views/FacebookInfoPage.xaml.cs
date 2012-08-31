@@ -154,7 +154,7 @@ namespace facebook_metro_sample.Views
                 parameters.q = query;
                 dynamic result = await _fb.GetTaskAsync("fql", parameters);
 
-                TotalFriends.Text = string.Format("You have {0} friend(s).", result.data.Count);
+                TotalFriends.Text = "You have " + result.data.Count + " friend(s).";
             }
             catch (FacebookApiException ex)
             {
@@ -222,6 +222,19 @@ namespace facebook_metro_sample.Views
             {
                 // handle error message
             }
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            dynamic parameters = new ExpandoObject();
+            parameters.access_token = _fb.AccessToken;
+            parameters.next = "";
+            WebView1.Navigate(_fb.GetLogoutUrl(parameters));
+        }
+
+        private void WebView1_LoadCompleted(object sender, NavigationEventArgs e)
+        {
+            Frame.Navigate(typeof(HomePage));
         }
     }
 }

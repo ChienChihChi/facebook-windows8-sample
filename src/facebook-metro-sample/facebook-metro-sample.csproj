@@ -115,8 +115,20 @@
     <Compile Include="Views\FacebookLoginPage.xaml.cs">
       <DependentUpon>FacebookLoginPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\FuntownInfoPage.xaml.cs">
+      <DependentUpon>FuntownInfoPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FuntownLoginPage.xaml.cs">
+      <DependentUpon>FuntownLoginPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MsnInfoPage.xaml.cs">
+      <DependentUpon>MsnInfoPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MsnLoginPage.xaml.cs">
+      <DependentUpon>MsnLoginPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -139,7 +151,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\FuntownInfoPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\FuntownLoginPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\HomePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\MsnInfoPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\MsnLoginPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -161,7 +189,13 @@
   <ItemGroup>
     <Reference Include="Facebook, Version=6.0.10.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Facebook.6.0.22\lib\WinRT\Facebook.dll</HintPath>
+      <HintPath>lib\Facebook.dll</HintPath>
+    </Reference>
+    <Reference Include="Funtown">
+      <HintPath>lib\Funtown.dll</HintPath>
+    </Reference>
+    <Reference Include="Msn">
+      <HintPath>lib\Msn.dll</HintPath>
     </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">
